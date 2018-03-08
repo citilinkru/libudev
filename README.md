@@ -52,7 +52,7 @@ Features
 Requirements
 ------------
 
-* Need at least `go1.8` or newer.
+* Need at least `go1.10` or newer.
 
 Documentation
 -------------
@@ -70,7 +70,7 @@ Contributing
 ------------
 * Fork
 * Write code
-* Run unit test: `go test -race -v ./...`
+* Run unit test: `go test -v ./...`
 * Run go vet: `go vet -v ./...`
 * Run go fmt: `go fmt ./...`
 * Commit changes
