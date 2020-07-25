@@ -52,7 +52,7 @@ Features
 Requirements
 ------------
 
-* Need at least `go1.10` or newer.
+* Need at least `go1.13` or newer.
 
 Documentation
 -------------

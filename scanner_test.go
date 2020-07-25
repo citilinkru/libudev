@@ -1,7 +1,11 @@
 package libudev
 
 import (
+	"archive/zip"
 	"github.com/citilinkru/libudev/matcher"
+	"io"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -15,8 +19,9 @@ func TestNewScanner(t *testing.T) {
 
 func TestScanDevices(t *testing.T) {
 	s := NewScanner()
-	s.devicesPath = "./assets/fixtures/demo_tree/sys/devices"
-	s.udevDataPath = "./assets/fixtures/demo_tree/run/udev/data"
+	Unzip("./assets/fixtures/demo_tree.zip", "/tmp/demo_tree/")
+	s.devicesPath = "/tmp/demo_tree/demo_tree/sys/devices"
+	s.udevDataPath = "/tmp/demo_tree/demo_tree/run/udev/data"
 	err, devices := s.ScanDevices()
 	if err != nil {
 		t.Fatal("Error scan demo tree")
@@ -59,4 +64,63 @@ func TestScanDevicesIfNotSupported(t *testing.T) {
 	if len(devices) != 0 {
 		t.Fatal("If the scan fails, then the device can not be found")
 	}
+}
+
+func Unzip(src, dest string) error {
+	r, err := zip.OpenReader(src)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := r.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	os.MkdirAll(dest, 0755)
+
+	// Closure to address file descriptors issue with all the deferred .Close() methods
+	extractAndWriteFile := func(f *zip.File) error {
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+		defer func() {
+			if err := rc.Close(); err != nil {
+				panic(err)
+			}
+		}()
+
+		path := filepath.Join(dest, f.Name)
+
+		if f.FileInfo().IsDir() {
+			os.MkdirAll(path, f.Mode())
+		} else {
+			os.MkdirAll(filepath.Dir(path), f.Mode())
+			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				return err
+			}
+			defer func() {
+				if err := f.Close(); err != nil {
+					panic(err)
+				}
+			}()
+
+			_, err = io.Copy(f, rc)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	for _, f := range r.File {
+		err := extractAndWriteFile(f)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

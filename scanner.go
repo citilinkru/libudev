@@ -13,8 +13,8 @@ package libudev
 import (
 	"bufio"
 	"bytes"
-	"github.com/citilinkru/libudev/types"
 	"fmt"
+	"github.com/citilinkru/libudev/types"
 	"io/ioutil"
 	"os"
 	"path/filepath"
