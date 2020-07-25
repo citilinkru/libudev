@@ -52,7 +52,7 @@ func (m *Matcher) AddRule(rule Rule) {
 }
 
 func (m *Matcher) Match(devices []*types.Device) []*types.Device {
-	ret := []*types.Device{}
+	var ret []*types.Device
 	for _, v := range devices {
 		if !m.matchDevice(v) {
 			continue

@@ -135,12 +135,12 @@ func TestMatchOr(t *testing.T) {
 
 func getDemoDevices() []*types.Device {
 	return []*types.Device{
-		&types.Device{
+		{
 			Devpath: "devpaht-1",
 			Env:     map[string]string{"ENV-1": "abc123def", "ENV-2": "123"},
 			Attrs:   map[string]string{"ATTR-1": "abc123def", "ATTR-2": "123"},
 		},
-		&types.Device{
+		{
 			Devpath: "devpaht-2",
 			Env:     map[string]string{"ENV-1": "ghi456jkl", "ENV-2": "456"},
 			Attrs:   map[string]string{"ATTR-1": "ghi456jkl", "ATTR-2": "456"},
